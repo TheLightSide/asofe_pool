@@ -56,7 +56,7 @@
         display: flex;
         flex: 1 1 auto;
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         min-height: 215px;
         justify-content: center;
         align-items: center;
@@ -67,11 +67,14 @@
         color: #f69b3a;
     }
 
-    .miningOption:first-child{
+    #nompAppDownload{
         background-color: #0eafc7;
     }
-    .miningOption:last-child{
+    #efbWindowsAppDownload{
         background-color: #b064e1;
+    }
+    .miningOption:last-child{
+        background-color: #B06501;
     }
     .miningOptionNum{
         font-size: 6em;
@@ -227,13 +230,22 @@
     </div>
 
     <div id="main">
-        <a href="#" class="miningOption" id="nompAppDownload">
-            <div class="miningOptionNum">1.</div>
-            <div class="miningOptionInstructions">
-                <div>Download NOMP App</div>
-                <div>Our preconfigured app makes mining that easy</div>
-            </div>
-        </a>
+        <div style="display: flex">
+            <a href="/static/download/ewbf_linux.tar.gz" class="miningOption" id="nompAppDownload">
+                <div class="miningOptionNum">1.</div>
+                <div class="miningOptionInstructions">
+                    <div>Download EWBF's Zcash Linux</div>
+                    <div>Our preconfigured app makes mining that easy</div>
+                </div>
+            </a>
+            <a href="/static/download/ewbf_windows.zip" class="miningOption" id="efbWindowsAppDownload">
+                <div class="miningOptionNum">1.</div>
+                <div class="miningOptionInstructions">
+                    <div>Download EWBF's Zcash Windows</div>
+                    <div>Our preconfigured app makes mining that easy</div>
+                </div>
+            </a>
+        </div>
         <div id="orHolder">
             <div id="orLine"></div>
             <div id="orText">or</div>
@@ -307,12 +319,6 @@
         event.preventDefault();
         $('#coinInfoBackground,#coinInfo').addClass('hidden');
         $('#coinInfoBackground').css('opacity', 0.0);
-        return false;
-    });
-
-    $('#nompAppDownload').click(function(event){
-        event.preventDefault();
-        alert('NOMP App development still in progress...');
         return false;
     });
 </script>

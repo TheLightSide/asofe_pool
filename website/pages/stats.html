@@ -134,7 +134,7 @@
 			<div class="boxLowerHeader">{{=capitalizeFirstLetter(it.stats.pools[pool].name)}} Blocks Found &nbsp;&nbsp;
 			<span style="float:right;"><small>
             <i class="fa fa-bars"></i> <span id="statsValidBlocks{{=pool}}">{{=it.stats.pools[pool].poolStats.validBlocks}}</span> Blocks &nbsp;&nbsp;
-			<i class="fa fa-money"></i> Paid: <span id="statsTotalPaid{{=pool}}">{{=(parseFloat(it.stats.pools[pool].poolStats.totalPaid)).toFixed(8)}}</span> {{=it.stats.pools[pool].symbol}}</small>&nbsp;&nbsp;</span>
+			<i class="fa fa-money"></i> Paid: <span id="statsTotalPaid{{=pool}}">{{=(parseFloat(it.stats.pools[pool].poolStats.totalPaid)).toFixed(2)}}</span> {{=it.stats.pools[pool].symbol}}</small>&nbsp;&nbsp;</span>
 			</div>
             <div class="boxStatsList" style="margin-top: 9px;">
 			<!--<div id="{{=it.stats.pools[pool].name}}NewBlocks"></div>-->
@@ -329,7 +329,7 @@ legend.append('text')
 				$('#statsHashrateAvg' + pool).text(getReadableHashRateString(calculateAverageHashrate(pool)));
 				$('#statsLuckDays' + pool).text(stats.pools[pool].luckDays);
 				$('#statsValidBlocks' + pool).text(stats.pools[pool].poolStats.validBlocks);
-				$('#statsTotalPaid' + pool).text((parseFloat(stats.pools[pool].poolStats.totalPaid)).toFixed(8));
+				$('#statsTotalPaid' + pool).text((parseFloat(stats.pools[pool].poolStats.totalPaid)).toFixed(2));
 				$('#statsNetworkBlocks' + pool).text(stats.pools[pool].poolStats.networkBlocks);
 				$('#statsNetworkDiff' + pool).text(stats.pools[pool].poolStats.networkDiff);
 				$('#statsNetworkSols' + pool).text(getReadableNetworkHashRateString(stats.pools[pool].poolStats.networkSols));

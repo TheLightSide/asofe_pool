@@ -1,0 +1,16 @@
+{
+    "name": "asofe",
+    "symbol": "asf",
+    "algorithm": "equihash",
+    "txfee": 0.01,
+    "requireShielding": true,
+    "payFoundersReward": true,
+    "percentFoundersReward": 20,
+    "maxFoundersRewardBlockHeight": 849999,
+    "foundersRewardAddressChangeInterval": 17709.3125,
+    "vFoundersRewardAddress": [
+        "t3gGcAEAZrK8ZFTkZxNVPsU65MjdHbzBRn3",
+        "t3Qm6EKTAevyyCz3DGoC9gHP1zhKrgin9Ky",
+        "t3VKceXDRh7LXqVs5cAzZkDZTGfhLdUtAj7"
+    ]
+}

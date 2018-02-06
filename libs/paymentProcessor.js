@@ -129,7 +129,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             }
         }, true);
      }
-     function validateZAddress (callback) {
+    function validateZAddress (callback) {
         daemon.cmd('z_validateaddress', [poolOptions.zAddress], function(result) {
             if (result.error){
                 logger.error(logSystem, logComponent, 'Error with payment processing daemon ' + JSON.stringify(result.error));
@@ -245,7 +245,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             logger.error(logSystem, logComponent, 'tBalance === NaN for sendTToZ');
             return;
         }
-        if ((tBalance - 10000) <= 0)
+        if ((tBalance - 100) <= 0)
             return;
 
         // do not allow more than a single z_sendmany operation at a time
@@ -254,7 +254,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             return;
         }
 
-        var amount = satoshisToCoins(tBalance - 10000);
+        var amount = satoshisToCoins(tBalance - 100);
         var params = [poolOptions.address, [{'address': poolOptions.zAddress, 'amount': amount}]];
         daemon.cmd('z_sendmany', params,
             function (result) {
@@ -284,7 +284,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             logger.error(logSystem, logComponent, 'zBalance === NaN for sendZToT');
             return;
         }
-        if ((zBalance - 10000) <= 0)
+        if ((zBalance - 100) <= 0)
             return;
 
         // do not allow more than a single z_sendmany operation at a time
@@ -293,10 +293,10 @@ function SetupForPool(logger, poolOptions, setupFinished){
             return;
         }
 
-        var amount = satoshisToCoins(zBalance - 10000);
-        // unshield no more than 100 ZEC at a time
-        if (amount > 100.0)
-            amount = 100.0;
+        var amount = satoshisToCoins(zBalance - 100);
+        // unshield no more than 20000 ASF at a time
+        if (amount > 20000.0)
+            amount = 20000.0;
 
         var params = [poolOptions.zAddress, [{'address': poolOptions.tAddress, 'amount': amount}]];
         daemon.cmd('z_sendmany', params,

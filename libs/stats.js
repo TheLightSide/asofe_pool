@@ -177,8 +177,8 @@ module.exports = function(logger, portalConfig, poolConfigs){
         _this.statPoolHistory.push(data);
     }
     
-    var magnitude = 100000000;
-    var coinPrecision = magnitude.toString().length - 1;
+    var magnitude = 1;
+    var coinPrecision = 2;
     
     function roundTo(n, digits) {
         if (digits === undefined) {
@@ -244,7 +244,7 @@ module.exports = function(logger, portalConfig, poolConfigs){
 		async.each(_this.stats.pools, function(pool, pcb) {
             pindex++;
 			var coin = String(_this.stats.pools[pool.name].name);
-			client.hscan(coin + ':shares:roundCurrent', 0, "match", a+"*", "count", 1000, function(error, result) {
+			client.hscan(coin + ':shares:roundCurrent', 0, "match", a+"*", "count", 1, function(error, result) {
                 if (error) {
                     pcb(error);
                     return;
@@ -290,11 +290,11 @@ module.exports = function(logger, portalConfig, poolConfigs){
 		async.each(_this.stats.pools, function(pool, pcb) {
 			var coin = String(_this.stats.pools[pool.name].name);
 			// get all immature balances from address
-			client.hscan(coin + ':immature', 0, "match", a+"*", "count", 10000, function(error, pends) {
+			client.hscan(coin + ':immature', 0, "match", a+"*", "count", 100, function(error, pends) {
                 // get all balances from address
-                client.hscan(coin + ':balances', 0, "match", a+"*", "count", 10000, function(error, bals) {
+                client.hscan(coin + ':balances', 0, "match", a+"*", "count", 100, function(error, bals) {
                     // get all payouts from address
-                    client.hscan(coin + ':payouts', 0, "match", a+"*", "count", 10000, function(error, pays) {
+                    client.hscan(coin + ':payouts', 0, "match", a+"*", "count", 100, function(error, pays) {
                         
                         var workerName = "";
                         var balAmount = 0;
@@ -328,7 +328,7 @@ module.exports = function(logger, portalConfig, poolConfigs){
                                 workerName = String(pends[1][b]);
                                 workers[workerName] = (workers[workerName] || {});
                             } else {
-                                pendingAmount = parseFloat(pends[1][b]);
+                                pendingAmount = parseFloat(pends[1][b] / 100);
                                 workers[workerName].immature = coinsRound(pendingAmount);
                                 totalImmature += pendingAmount;
                             }

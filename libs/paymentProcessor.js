@@ -245,7 +245,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             logger.error(logSystem, logComponent, 'tBalance === NaN for sendTToZ');
             return;
         }
-        if ((tBalance - 100) <= 0)
+        if ((tBalance - 10) <= 0)
             return;
 
         // do not allow more than a single z_sendmany operation at a time
@@ -254,7 +254,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             return;
         }
 
-        var amount = satoshisToCoins(tBalance - 100);
+        var amount = satoshisToCoins(tBalance - 1);
         var params = [poolOptions.address, [{'address': poolOptions.zAddress, 'amount': amount}]];
         daemon.cmd('z_sendmany', params,
             function (result) {
@@ -284,7 +284,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             logger.error(logSystem, logComponent, 'zBalance === NaN for sendZToT');
             return;
         }
-        if ((zBalance - 100) <= 0)
+        if ((zBalance - 10) <= 0)
             return;
 
         // do not allow more than a single z_sendmany operation at a time
@@ -293,7 +293,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
             return;
         }
 
-        var amount = satoshisToCoins(zBalance - 100);
+        var amount = satoshisToCoins(zBalance - 1);
         // unshield no more than 20000 ASF at a time
         if (amount > 20000.0)
             amount = 20000.0;

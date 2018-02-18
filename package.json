@@ -49,6 +49,7 @@
         "nonce": "1.0.4",
         "redis": "2.7.1",
         "request": "2.81.0",
+        "sleep": "^5.1.1",
         "stratum-pool": "git+https://github.com/develnk/node-stratum-pool.git"
     },
     "engines": {

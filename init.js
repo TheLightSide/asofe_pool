@@ -2,6 +2,8 @@ var fs = require('fs');
 var path = require('path');
 var os = require('os');
 var cluster = require('cluster');
+var sleep = require('sleep');
+var daemon = require('stratum-pool/lib/daemon.js');
 
 var async = require('async');
 var extend = require('extend');
@@ -498,20 +500,41 @@ var startProfitSwitch = function(){
     });
 };
 
+var daemon = new daemon.interface(portalConfig.daemons);
 
+function preExecute () {
+    var batchRPCcommand = [];
+    batchRPCcommand.push(['getinfo', []]);
+    daemon.batchCmd(batchRPCcommand, function(error, details) {
+        if (error != null) {
+            console.log("Daemon: " + error.type);
+            sleep.sleep(2);
+            preExecute();
+        }
+        else if (details != null) {
+            details.every(function (result) {
+                if (result.error != null) {
+                    console.log("Daemon: " + JSON.stringify(result.error));
+                    sleep.sleep(2);
+                    preExecute();
+                }
+                else {
+                    execute();
+                }
+            });
+        }
+    });
+};
+
+function execute () {
+    spawnPoolWorkers();
+    startPaymentProcessor();
+    startWebsite();
+    startProfitSwitch();
+    startCliListener();
+};
 
 (function init(){
-
     poolConfigs = buildPoolConfigs();
-
-    spawnPoolWorkers();
-
-    startPaymentProcessor();
-
-    startWebsite();
-
-    startProfitSwitch();
-
-    startCliListener();
-
+    preExecute(execute);
 })();

@@ -202,7 +202,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
                 var tBalance = parseFloat(0);
                 if (result[0].response != null && result[0].response.length > 0) {
                     for (var i = 0, len = result[0].response.length; i < len; i++) {
-                        if (result[0].response[i].address && result[0].response[i].address !== notAddr) {
+                        if (result[0].response[i].address) {
                             tBalance += parseFloat(result[0].response[i].amount || 0);
                         }
                     }
@@ -1072,7 +1072,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
                 var tries = 0;
                 var trySend = function (withholdPercent) {
                     
-                    var addressAmounts = {};
+                    var addressAmounts = [];
                     var balanceAmounts = {};
                     var shareAmounts = {};
                     var timePeriods = {};
@@ -1111,11 +1111,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
                             // send funds
                             worker.sent = satoshisToCoins(toSendSatoshis);
                             worker.balanceChange = Math.min(worker.balance, toSendSatoshis) * -1;
-                            if (addressAmounts[address] != null && addressAmounts[address] > 0) {
-                                addressAmounts[address] = coinsRound(addressAmounts[address] + worker.sent);
-                            } else {
-                                addressAmounts[address] = worker.sent;
-                            }
+                            addressAmounts.push({'address': address, 'amount': coinsRound(worker.sent)});
                         } else {
                             // add to balance, not enough minerals
                             worker.sent = 0;
@@ -1145,77 +1141,20 @@ function SetupForPool(logger, poolOptions, setupFinished){
                         return;
                     }
                     
-                    // do final rounding of payments per address
-                    // this forces amounts to be valid (0.12345678)
-                    for (var a in addressAmounts) {
-                        addressAmounts[a] = coinsRound(addressAmounts[a]);
-                    }
-
-                    // POINT OF NO RETURN! GOOD LUCK!
-                    // WE ARE SENDING PAYMENT CMD TO DAEMON
-                    
-                    // perform the sendmany operation .. addressAccount
-                    var rpccallTracking = 'sendmany "" '+JSON.stringify(addressAmounts);
-                    //console.log(rpccallTracking);
-
-                    daemon.cmd('sendmany', ["", addressAmounts], function (result) {
-                        // check for failed payments, there are many reasons
-                        if (result.error && result.error.code === -6) {
-                            // check if it is because we don't have enough funds
-                            if (result.error.message && result.error.message.includes("insufficient funds")) {
-                                // only try up to XX times (Max, 0.5%)
-                                if (tries < 5) {
-                                    // we thought we had enough funds to send payments, but apparently not...
-                                    // try decreasing payments by a small percent to cover unexpected tx fees?
-                                    var higherPercent = withholdPercent + 0.001; // 0.1%
-                                    logger.warning(logSystem, logComponent, 'Insufficient funds (??) for payments ('+satoshisToCoins(totalSent)+'), decreasing rewards by ' + (higherPercent * 100).toFixed(1) + '% and retrying');
-                                    trySend(higherPercent);
-                                } else {
-                                    logger.warning(logSystem, logComponent, rpccallTracking);
-                                    logger.error(logSystem, logComponent, "Error sending payments, decreased rewards by too much!!!");
-                                    callback(true);
-                                }
-                            } else {
-                                // there was some fatal payment error?
-                                logger.warning(logSystem, logComponent, rpccallTracking);
-                                logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
-                                // payment failed, prevent updates to redis
+                    var params = [poolOptions.tAddress, addressAmounts];
+                    logger.special(logSystem, logComponent, 'Sending money to worker: ' + JSON.stringify(addressAmounts));
+                    daemon.cmd('z_sendmany', params,
+                        function (result) {
+                            //Check if payments failed because wallet doesn't have enough coins to pay for tx fees
+                            if (!result || result.error || result[0].error || !result[0].response) {
+                                logger.error(logSystem, logComponent, 'Error trying to send money ' + JSON.stringify(result[0].error));
+                                callback = function (){};
                                 callback(true);
                             }
-                            return;
-                        }
-                        else if (result.error && result.error.code === -5) {
-                            // invalid address specified in addressAmounts array
-                            logger.warning(logSystem, logComponent, rpccallTracking);
-                            logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
-                            // payment failed, prevent updates to redis
-                            callback(true);
-                            return;
-                        }
-                        else if (result.error && result.error.message != null) {
-                            // invalid amount, others?
-                            logger.warning(logSystem, logComponent, rpccallTracking);
-                            logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
-                            // payment failed, prevent updates to redis
-                            callback(true);
-                            return;
-                        }
-                        else if (result.error) {
-                            // unknown error
-                            logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
-                            // payment failed, prevent updates to redis
-                            callback(true);
-                            return;
-                        }
-                        else {
+                            else if(result && result[0].error == null && result[0].response) {
+                                var txid = result[0].response;
 
-                            // make sure sendmany gives us back a txid
-                            var txid = null;
-                            if (result.response) {
-                                txid = result.response;
-                            }
-                            if (txid != null) {
-
+                                logger.special(logSystem, logComponent, 'Sent money to worker: ' + JSON.stringify(addressAmounts));
                                 // it worked, congrats on your pools payout ;)
                                 logger.special(logSystem, logComponent, 'Sent ' + satoshisToCoins(totalSent)
                                     + ' to ' + Object.keys(addressAmounts).length + ' miners; txid: '+txid);
@@ -1230,25 +1169,118 @@ function SetupForPool(logger, poolOptions, setupFinished){
                                 var paymentBlocks = rounds.filter(function(r){ return r.category == 'generate'; }).map(function(r){
                                     return parseInt(r.height);
                                 });
-                                
+
                                 var paymentsUpdate = [];
                                 var paymentsData = {time:Date.now(), txid:txid, shares:totalShares, paid:satoshisToCoins(totalSent),  miners:Object.keys(addressAmounts).length, blocks: paymentBlocks, amounts: addressAmounts, balances: balanceAmounts, work:shareAmounts};
                                 paymentsUpdate.push(['zadd', logComponent + ':payments', Date.now(), JSON.stringify(paymentsData)]);
-                                
+
                                 callback(null, workers, rounds, paymentsUpdate);
-
-                            } else {
-
-                                clearInterval(paymentInterval);
-
-                                logger.error(logSystem, logComponent, 'Error RPC sendmany did not return txid '
-                                    + JSON.stringify(result) + 'Disabling payment processing to prevent possible double-payouts.');
-
-                                callback(true);
-                                return;
                             }
                         }
-                    }, true, true);
+                    );
+
+                    // do final rounding of payments per address
+                    // this forces amounts to be valid (0.12345678)
+                    // for (var a in addressAmounts) {
+                    //     addressAmounts[a] = coinsRound(addressAmounts[a]);
+                    // }
+
+                    // POINT OF NO RETURN! GOOD LUCK!
+                    // WE ARE SENDING PAYMENT CMD TO DAEMON
+
+                    // perform the sendmany operation .. addressAccount
+                    // var rpccallTracking = 'sendmany "" '+JSON.stringify(addressAmounts);
+                    // daemon.cmd('sendmany', ["", addressAmounts], function (result) {
+                    //     // check for failed payments, there are many reasons
+                    //     if (result.error && result.error.code === -6) {
+                    //         // check if it is because we don't have enough funds
+                    //         if (result.error.message && result.error.message.includes("insufficient funds")) {
+                    //             // only try up to XX times (Max, 0.5%)
+                    //             if (tries < 5) {
+                    //                 // we thought we had enough funds to send payments, but apparently not...
+                    //                 // try decreasing payments by a small percent to cover unexpected tx fees?
+                    //                 var higherPercent = withholdPercent + 0.001; // 0.1%
+                    //                 logger.warning(logSystem, logComponent, 'Insufficient funds (??) for payments ('+satoshisToCoins(totalSent)+'), decreasing rewards by ' + (higherPercent * 100).toFixed(1) + '% and retrying');
+                    //                 trySend(higherPercent);
+                    //             } else {
+                    //                 logger.warning(logSystem, logComponent, rpccallTracking);
+                    //                 logger.error(logSystem, logComponent, "Error sending payments, decreased rewards by too much!!!");
+                    //                 callback(true);
+                    //             }
+                    //         } else {
+                    //             // there was some fatal payment error?
+                    //             logger.warning(logSystem, logComponent, rpccallTracking);
+                    //             logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
+                    //             // payment failed, prevent updates to redis
+                    //             callback(true);
+                    //         }
+                    //         return;
+                    //     }
+                    //     else if (result.error && result.error.code === -5) {
+                    //         // invalid address specified in addressAmounts array
+                    //         logger.warning(logSystem, logComponent, rpccallTracking);
+                    //         logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
+                    //         // payment failed, prevent updates to redis
+                    //         callback(true);
+                    //         return;
+                    //     }
+                    //     else if (result.error && result.error.message != null) {
+                    //         // invalid amount, others?
+                    //         logger.warning(logSystem, logComponent, rpccallTracking);
+                    //         logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
+                    //         // payment failed, prevent updates to redis
+                    //         callback(true);
+                    //         return;
+                    //     }
+                    //     else if (result.error) {
+                    //         // unknown error
+                    //         logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
+                    //         // payment failed, prevent updates to redis
+                    //         callback(true);
+                    //         return;
+                    //     }
+                    //     else {
+                    //
+                    //         // make sure sendmany gives us back a txid
+                    //         var txid = null;
+                    //         if (result.response) {
+                    //             txid = result.response;
+                    //         }
+                    //         if (txid != null) {
+                    //
+                    //             // it worked, congrats on your pools payout ;)
+                    //             logger.special(logSystem, logComponent, 'Sent ' + satoshisToCoins(totalSent)
+                    //                 + ' to ' + Object.keys(addressAmounts).length + ' miners; txid: '+txid);
+                    //
+                    //             if (withholdPercent > 0) {
+                    //                 logger.warning(logSystem, logComponent, 'Had to withhold ' + (withholdPercent * 100)
+                    //                     + '% of reward from miners to cover transaction fees. '
+                    //                     + 'Fund pool wallet with coins to prevent this from happening');
+                    //             }
+                    //
+                    //             // save payments data to redis
+                    //             var paymentBlocks = rounds.filter(function(r){ return r.category == 'generate'; }).map(function(r){
+                    //                 return parseInt(r.height);
+                    //             });
+                    //
+                    //             var paymentsUpdate = [];
+                    //             var paymentsData = {time:Date.now(), txid:txid, shares:totalShares, paid:satoshisToCoins(totalSent),  miners:Object.keys(addressAmounts).length, blocks: paymentBlocks, amounts: addressAmounts, balances: balanceAmounts, work:shareAmounts};
+                    //             paymentsUpdate.push(['zadd', logComponent + ':payments', Date.now(), JSON.stringify(paymentsData)]);
+                    //
+                    //             callback(null, workers, rounds, paymentsUpdate);
+                    //
+                    //         } else {
+                    //
+                    //             clearInterval(paymentInterval);
+                    //
+                    //             logger.error(logSystem, logComponent, 'Error RPC sendmany did not return txid '
+                    //                 + JSON.stringify(result) + 'Disabling payment processing to prevent possible double-payouts.');
+                    //
+                    //             callback(true);
+                    //             return;
+                    //         }
+                    //     }
+                    // }, true, true);
                 };
                 
                 // attempt to send any owed payments

@@ -3,7 +3,7 @@
     "symbol": "asf",
     "algorithm": "equihash",
     "txfee": 0.01,
-    "requireShielding": true,
+    "requireShielding": false,
     "payFoundersReward": true,
     "percentFoundersReward": 20,
     "maxFoundersRewardBlockHeight": 849999,

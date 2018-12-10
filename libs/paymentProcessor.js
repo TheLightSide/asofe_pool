@@ -1111,10 +1111,14 @@ function SetupForPool(logger, poolOptions, setupFinished){
                             // send funds
                             worker.sent = satoshisToCoins(toSendSatoshis);
                             if (worker.sent > 0) {
-															worker.balanceChange = Math.min(worker.balance, toSendSatoshis) * -1;
-															//addressAmounts.push({'address': address, 'amount': coinsRound(worker.sent)});
-															addressAmounts[address] = worker.sent;
-														}
+								worker.balanceChange = Math.min(worker.balance, toSendSatoshis) * -1;
+                                if (addressAmounts[address] != null) {
+                                	// Important! Need to round!
+	                                worker.sent = Number(parseFloat(addressAmounts[address]) + parseFloat(worker.sent)).toFixed(2);
+                                }
+
+								addressAmounts[address] = Number(parseFloat(worker.sent)).toFixed(2);
+                            }
                         } else {
                             // add to balance, not enough minerals
                             worker.sent = 0;

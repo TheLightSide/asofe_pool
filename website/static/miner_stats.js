@@ -177,7 +177,7 @@ function updateWorkerStats() {
 }
 function addWorkerToDisplay(name, htmlSafeName, workerObj) {
 	var htmlToAdd = "";
-	htmlToAdd = '<div class="boxStats" id="boxStatsLeft" style="float:left; margin: 9px; min-width: 260px;"><div class="boxStatsList">';
+	htmlToAdd = '<div class="boxStats" id="boxStatsLeft" style="float:left; margin: 9px; min-width: 260px;"><div class="boxStatsList" style="background-color:#ebf4fa ">';
 	if (htmlSafeName.indexOf("_") >= 0) {
 		htmlToAdd+= '<div class="boxLowerHeader">'+htmlSafeName.substr(htmlSafeName.indexOf("_")+1,htmlSafeName.length)+'</div>';
 	} else {

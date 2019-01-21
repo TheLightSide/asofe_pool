@@ -1,5 +1,6 @@
 node_modules/
 .idea/
 config.json
+package-lock.json
 pool_configs/config.json
 !pool_configs/zclassic_example.json

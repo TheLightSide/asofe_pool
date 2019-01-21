@@ -8,20 +8,17 @@
         "pool",
         "server",
         "poolserver",
-        "zclassic",
-        "zcash",
-        "equihash"
+        "bitcoin",
+        "litecoin",
+        "scrypt"
     ],
-    "homepage": "https://github.com/zencashio/z-nomp",
+    "homepage": "https://github.com/zone117x/node-open-mining-portal",
     "bugs": {
-        "url": "https://github.com/zencashio/z-nomp/issues"
+        "url": "https://github.com/zone117x/node-open-mining-portal/issues"
     },
-    "license": "MIT",
-    "author": "Joshua Yabut",
+    "license": "GPL-2.0",
+    "author": "Matthew Little",
     "contributors": [
-        "aayanl",
-        "sennevb",
-        "Matthew Little",
         "vekexasia",
         "TheSeven"
     ],
@@ -31,10 +28,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/zencashio/z-nomp.git"
+        "url": "https://github.com/zone117x/node-open-mining-portal.git"
     },
     "dependencies": {
-        "async": "^2.5.0",
+        "async": "1.5.2",
         "bignum": "0.12.5",
         "body-parser": "^1.18.2",
         "colors": "^1.1.2",
@@ -42,7 +39,6 @@
         "dateformat": "^2.2.0",
         "dot": "^1.1.2",
         "express": "^4.16.2",
-        "extend": "^3.0.1",
         "mysql": "^2.15.0",
         "node-json-minify": "^1.0.0",
         "node-watch": "^0.5.5",
@@ -50,12 +46,13 @@
         "redis": "^2.8.0",
         "request": "^2.83.0",
         "sleep": "^5.1.1",
-        "stratum-pool": "git+https://github.com/develnk/node-stratum-pool.git"
+        "stratum-pool": "git+https://github.com/develnk/node-stratum-pool.git",
+        "extend": "*"
     },
     "engines": {
         "node": ">=0.10"
     },
     "scripts": {
-        "start": "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/node_modules/stratum-pool/node_modules/equihashverify/build/Release/:$PWD/node_modules/equihashverify/build/Release/ node init.js"
+      "start": "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/node_modules/stratum-pool/node_modules/equihashverify/build/Release/:$PWD/node_modules/equihashverify/build/Release/ node init.js"
     }
 }

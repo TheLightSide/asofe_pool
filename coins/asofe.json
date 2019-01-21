@@ -1,16 +1,30 @@
 {
     "name": "asofe",
     "symbol": "asf",
-    "algorithm": "equihash",
+    "algorithm": "equihash144_5",
+    "peerMagic": "fbc0b6db",
+    "peerMagicTestnet": "fcc1b7dc",
     "txfee": 0.01,
-    "requireShielding": false,
+    "requireShielding": true,
     "payFoundersReward": true,
     "percentFoundersReward": 20,
     "maxFoundersRewardBlockHeight": 849999,
     "foundersRewardAddressChangeInterval": 17709.3125,
     "vFoundersRewardAddress": [
-        "t3gGcAEAZrK8ZFTkZxNVPsU65MjdHbzBRn3",
-        "t3Qm6EKTAevyyCz3DGoC9gHP1zhKrgin9Ky",
-        "t3VKceXDRh7LXqVs5cAzZkDZTGfhLdUtAj7"
+        "t3bgAN4fWmE16djBmdfBxXdvkCecDgrBF8v",
+        "t3chkBrxyBtiGXo9oBmQpUvrSHu6DK83g9o",
+        "t3PncNiD5qwBVrriECz69TEwrzUGPms7yJ6",
+        "t3fNvjgMWcX5qwjsRa7487mufqj9xHFZw31",
+        "t3dSbaRhUS6rd43rZQmC2Jc61N8RCQR97RZ",
+        "t3QvNjEdvbK3jjiyYRXjnR1osQanAYuLrZe",
+        "t3RtuB5zAGTNDCNGhFdtaTD8TPewWzVponP",
+        "t3YRQBVjvrGFXkGnjxXKhp12k5QuL4Kdhqj",
+        "t3d3cbpe31jq4jGdqzxJtDCcyc6bzwhUYgj",
+        "t3bgAN4fWmE16djBmdfBxXdvkCecDgrBF8v",
+        "t3chkBrxyBtiGXo9oBmQpUvrSHu6DK83g9o",
+        "t3PncNiD5qwBVrriECz69TEwrzUGPms7yJ6",
+        "t3fNvjgMWcX5qwjsRa7487mufqj9xHFZw31",
+        "t3dSbaRhUS6rd43rZQmC2Jc61N8RCQR97RZ",
+        "t3QvNjEdvbK3jjiyYRXjnR1osQanAYuLrZe"
     ]
 }

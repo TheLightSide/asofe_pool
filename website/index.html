@@ -3,88 +3,70 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-
     <link rel="icon" type="image/png" href="/static/favicon.png"/>
-
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/normalize.min.css">
-    <link rel="stylesheet" href="/static/pure-min.css">
-
+    <!--<link rel="stylesheet" href="/static/normalize.min.css">-->
+    <!--<link rel="stylesheet" href="/static/pure-min.css">-->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-reboot.css">
     <script src="/static/jquery.min.js"></script>
-
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
     <script src="/static/d3.min.js"></script>
     <script src="/static/nvd3.js"></script>
     <link rel="stylesheet" href="/static/nvd3.css">
-
     <script src="/static/main.js"></script>
     <link rel="stylesheet" href="/static/style.css">
-
     <title>Asofe</title>
-
 </head>
 
 <body>
-
-<header>
-    <div class="home-menu pure-menu pure-menu-open pure-menu-horizontal">
-
-        <a class="pure-menu-heading hot-swapper" href="/"><i class="fa fa-home"></i>&nbsp;Asofe</a>
-
-        <ul>
-            <li class="{{? it.selected === 'getting_started' }}pure-menu-selected{{?}}">
-                <a class="hot-swapper" href="/getting_started">
-                    <i class="fa fa-rocket"></i>&nbsp;
-                    Getting Started
-                </a>
-            </li>
-            <li class="{{? it.selected === 'stats' }}pure-menu-selected{{?}}">
-                <a class="hot-swapper" href="/stats">
-                    <i class="fa fa-bar-chart-o"></i>&nbsp;
-                    Graph Stats
-                </a>
-            </li>
-            <li class="{{? it.selected === 'tbs' }}pure-menu-selected{{?}}">
-                <a class="hot-swapper" href="/tbs">
-                    <i class="fa fa-table"></i>&nbsp;
-                    Tab Stats
-                </a>
-            </li>
-            <li class="{{? it.selected === 'workers' }}pure-menu-selected{{?}}">
-                <a class="hot-swapper" href="/workers">
-                    <i class="fa fa-cogs"></i>&nbsp;
-                    Workers Stats
-                </a>
-            </li>
-            <li class="{{? it.selected === 'api' }}pure-menu-selected{{?}}">
-                <a class="hot-swapper" href="/api">
-                    <i class="fa fa-code"></i>&nbsp;
-                    API
-                </a>
-            </li>
-        </ul>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar bg custom-navbar">
+            <a class="navbar-brand" href="/"><i class="fa fa-home"></i>&nbsp;Asofe</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item {{? it.selected === 'getting_started' }}active{{?}}">
+                        <a class="nav-link" href="/getting_started"><i class="fa fa-rocket"></i>&nbsp;Getting Started</span></a>
+                    </li>
+                    <li class="nav-item {{? it.selected === 'stats' }}active{{?}}">
+                        <a class="nav-link" href="/stats"><i class="fa fa-bar-chart-o"></i>&nbsp;Graph Stats</a>
+                    </li>
+                    <li class="nav-item {{? it.selected === 'tbs' }}active{{?}}">
+                        <a class="nav-link" href="/tbs"><i class="fa fa-table"></i>&nbsp;Tab Stats</a>
+                    </li>
+                    <li class="nav-item {{? it.selected === 'workers' }}active{{?}}">
+                        <a class="nav-link" href="/workers"><i class="fa fa-cogs"></i>&nbsp;Workers Stats</a>
+                    </li>
+                    <li class="nav-item {{? it.selected === 'api' }}active{{?}}">
+                        <a class="nav-link" href="/api"><i class="fa fa-code"></i>&nbsp;API</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    {{=it.page}}
+                </div>
+            </div>
+        </main>
+        <footer class="container py-5">
+            <div>
+                Official Asofe pool (ASF)
+            </div>
+            <div>
+                <i class="fa fa-heart"></i>&nbsp; Support this project by donating&nbsp;<i class="fa fa-eth"></i>&nbsp;ETH: 0x74FbAc5B704A406B9ab4cB9c6A6b790590136C3f <i class="fa fa-btc"></i> BTC: 16zg55XqNoQPMcY1MbrNTqCp584MS7Ggen
+            </div>
+            <div id="communityFooter">
+                Source code: <a target="_blank" href="https://github.com/TheLightSide/asofe_pool">/r/nomp</a>
+            </div>
+        </footer>
     </div>
-</header>
-
-<main>
-    {{=it.page}}
-</main>
-
-
-<footer>
-
-    <div>
-        Official Asofe pool (ASF)
-    </div>
-    <div>
-        <i class="fa fa-heart"></i>&nbsp; Support this project by donating&nbsp;<i class="fa fa-eth"></i>&nbsp;ETH: 0x74FbAc5B704A406B9ab4cB9c6A6b790590136C3f <i class="fa fa-btc"></i> BTC: 16zg55XqNoQPMcY1MbrNTqCp584MS7Ggen
-    </div>
-    <div id="communityFooter">
-        Source code: <a target="_blank" href="https://github.com/TheLightSide/asofe_pool">/r/nomp</a>
-    </div>
-
-</footer>
-
 </body>
 </html>

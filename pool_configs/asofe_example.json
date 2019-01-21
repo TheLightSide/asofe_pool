@@ -20,13 +20,21 @@
         "": 0.2,
         "": 0.3
     },
+
+    "tlsOptions": {
+        "enabled": false,
+        "serverKey":"",
+        "serverCert":"",
+        "ca":""
+    },
+
     "paymentProcessing": {
         "minConf": 10,
         "enabled": true,
         "paymentMode": "prop",
         "_comment_paymentMode":"prop, pplnt",
-        "paymentInterval": 5,
-        "minimumPayment": 10000,
+        "paymentInterval": 30,
+        "minimumPayment": 2000,
         "maxBlocksPerPayment": 1,
         "daemon": {
             "host": "127.0.0.1",
@@ -35,18 +43,13 @@
             "password": "password"
         }
     },
-    "tlsOptions": {
-        "enabled": false,
-        "serverKey":"",
-        "serverCert":"",
-        "ca":""
-    },
+
     "ports": {
         "3032": {
             "tls":false,
-            "diff": 1,
+            "diff": 0.05,
             "varDiff": {
-                "minDiff": 0.1,
+                "minDiff": 0.05,
                 "maxDiff": 16,
                 "targetTime": 15,
                 "retargetTime": 60,
@@ -54,6 +57,7 @@
             }
         }
     },
+
     "daemons": [
         {
             "host": "127.0.0.1",
@@ -62,20 +66,35 @@
             "password": "password"
         }
     ],
+
     "p2p": {
         "enabled": false,
+        /* Host for daemon */
         "host": "127.0.0.1",
+        /* Port configured for daemon (this is the actual peer port not RPC port) */
         "port": 19333,
+        /* If your coin daemon is new enough (i.e. not a shitcoin) then it will support a p2p
+           feature that prevents the daemon from spamming our peer node with unnecessary
+           transaction data. Assume its supported but if you have problems try disabling it. */
         "disableTransactions": true
     },
+
+    /* Enabled this mode and shares will be inserted into in a MySQL database. You may also want
+   to use the "emitInvalidBlockHashes" option below if you require it. The config options
+   "redis" and "paymentProcessing" will be ignored/unused if this is enabled. */
     "mposMode": {
         "enabled": false,
-        "host": "127.0.0.1",
-        "port": 3306,
-        "user": "me",
-        "password": "mypass",
-        "database": "zec",
+        "host": "127.0.0.1", //MySQL db host
+        "port": 3306, //MySQL db port
+        "user": "me", //MySQL db user
+        "password": "mypass", //MySQL db password
+        "database": "ltc", //MySQL db database name
+
+        /* Checks for valid password in database when miners connect. */
         "checkPassword": true,
+
+        /* Unregistered workers can automatically be registered (added to database) on stratum
+           worker authentication if this is true. */
         "autoCreateWorker": false
     }
 }

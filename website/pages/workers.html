@@ -1,19 +1,8 @@
 <style>
-    #bottomNotes {
-        display: block;
-        padding-left: 18px;
-        padding-right: 18px;
-        padding-bottom: 18px;
-    }
     #topPool {
-        padding-top: 18px;
-        padding-left: 18px;
-        padding-right: 18px;
+        margin-top: 25px;
     }
-    #topPool > div > div > svg {
-        display: block;
-        height: 280px;
-    }
+
     .poolWrapper {
         border: solid 1px #c7c7c7;
         border-radius: 5px;
@@ -32,37 +21,20 @@
         width: 100%;
     }
 </style>
-<script type="text/javascript"> 
-function searchKeyPress(e)
-{
-    // look for window.event in case event isn't passed in
-    e = e || window.event;
-    if (e.keyCode == 13)
-    {
-        document.getElementById('btnSearch').click();
-        return false;
-    }
-    return true;
-}
-        $(document).ready(function(){
-                $('.btn-lg').click(function(){
-                        window.location = "workers/" + $('.input-lg').val();
-                });
-        });
-</script>
 {{ function capitalizeFirstLetter(t){return t.charAt(0).toUpperCase()+t.slice(1)} }}
 {{ var i=0; for(var pool in it.stats.pools) { }}
 <div id="topPool">
     <div class="poolWrapper">
         <div class="poolLabel">
 			<span style="float:right; margin-bottom: 8px;">
-				<small>Miner Lookup: 
-				<input type="text" class="form-control input-lg" onkeypress="return searchKeyPress(event);">
-				<span class="input-group-btn">
-						<button class="btn btn-default btn-lg" type="button">Lookup</button>
-				</span>
-				</small>
-			</span>					
+                <form class="form-inline">
+                  <div class="form-group mx-sm-3 mb-2">
+                    <small><label for="lookup">Miner Lookup:</label></small>
+                    <input class="form-control lookup-input" id="lookup" placeholder="Address" onkeypress="return searchKeyPress(event);">
+                  </div>
+                  <button id="btn-lookup" type="submit" class="btn btn-primary mb-2">Lookup</button>
+                </form>
+			</span>
             {{=capitalizeFirstLetter(it.stats.pools[pool].name)}} Top Miners &nbsp;&nbsp;
 			<small><i class="fa fa-users"></i> <span id="statsMiners{{=pool}}">{{=it.stats.pools[pool].minerCount}}</span> Miners &nbsp;&nbsp;
 			<i class="fa fa-rocket"></i> <span id="statsWorkers{{=pool}}">{{=it.stats.pools[pool].workerCount}}</span> Workers &nbsp;&nbsp;
@@ -92,3 +64,22 @@ function searchKeyPress(e)
     </div>
 </div>
 {{ } }}
+
+<script type="text/javascript">
+    function searchKeyPress(e)
+    {
+        // look for window.event in case event isn't passed in
+        e = e || window.event;
+        if (e.keyCode == 13)
+        {
+            document.getElementById('btn-lookup').click();
+            return false;
+        }
+        return true;
+    }
+    $(document).ready(function(){
+        $('#btn-lookup').click(function(){
+            window.location = "workers/" + $('.lookup-input').val();
+        });
+    });
+</script>

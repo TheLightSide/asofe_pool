@@ -101,6 +101,38 @@ module.exports = function(logger, portalConfig, poolConfigs){
 			        res.end(JSON.stringify({result: "error"}));
 		        }
 		        return;
+			case 'payouts':
+				res.header('Content-Type', 'application/json');
+				if (req.url.indexOf("?")>0) {
+					var url_parms = req.url.split("?");
+					if (url_parms.length > 0) {
+						var address = url_parms[1] || null;
+						if (address != null && address.length > 0) {
+							let result = [];
+
+							portalStats.getAllPayoutsByAddress(address, function (payouts) {
+								for (let i in payouts) {
+									let obj = {
+										'url': 'https://explorer.asofe.org/tx/' + payouts[i].hash,
+										'amount': payouts[i].amount,
+										'date': payouts[i].date
+									};
+
+									result.push(obj);
+								}
+
+								res.end(JSON.stringify(result));
+							});
+						} else {
+							res.end(JSON.stringify({result: "error"}));
+						}
+					} else {
+						res.end(JSON.stringify({result: "error"}));
+					}
+				} else {
+					res.end(JSON.stringify({result: "error"}));
+				}
+		        return;
             case 'live_stats':
                 res.writeHead(200, {
                     'Content-Type': 'text/event-stream',

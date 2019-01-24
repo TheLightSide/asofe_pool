@@ -275,6 +275,35 @@ module.exports = function(logger, portalConfig, poolConfigs){
 		});
 	};
 
+	this.getAllPayoutsByAddress = function (address, cback) {
+		var a = address.split(".")[0];
+		var client = redisClients[0].client;
+		var payouts = [];
+
+		async.each(_this.stats.pools, function(pool, pcb) {
+			let coin = String(_this.stats.pools[pool.name].name);
+			client.hgetall(coin + ':history:' + a, function(error, pays) {
+				for (let hash in pays) {
+					let h = {
+						'hash': hash,
+					};
+					let data = Object.assign(h, JSON.parse(pays[hash]));
+					payouts.push(data);
+				}
+
+				pcb();
+			});
+		}, function(err) {
+			if (err) {
+				cback(0);
+				return;
+			}
+
+			var reversed = payouts.reverse();
+			cback(reversed);
+		});
+	};
+
 	this.getBalanceByAddress = function(address, cback){
 
 		var a = address.split(".")[0];

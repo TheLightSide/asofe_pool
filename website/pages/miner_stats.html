@@ -52,7 +52,16 @@
 		border: solid 1px #c7c7c7;
 		border-radius: 5px;
 	}
+	.tab-content {
+		min-height: 330px;
+	}
 
+	.pay-url {
+		width: 43em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 </style>
 
 <div class="row chartRow chartRowPool">
@@ -86,12 +95,25 @@
 			<a class="nav-link" id="payouts-tab" data-toggle="tab" href="#payouts" role="tab" aria-controls="profile" aria-selected="false">Payouts</a>
 		</li>
 	</ul>
-	<div class="tab-content" id="myTabContent">
+	<div class="tab-content">
 		<div class="tab-pane fade show active" id="workers" role="tabpanel" aria-labelledby="workers-tab">
 			<div id="boxesWorkers"> </div>
 		</div>
 		<div class="tab-pane fade" id="payouts" role="tabpanel" aria-labelledby="payouts-tab">
-
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover" id="tblPayouts">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Amount</th>
+							<th scope="col">Tx</th>
+							<th scope="col">Date</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

@@ -8,6 +8,7 @@ var totalImmature;
 var totalBal;
 var totalPaid;
 var totalShares;
+var payouts;
 
 function getReadableHashRateString(hashrate){
 	hashrate = (hashrate * 2);
@@ -215,6 +216,18 @@ $.getJSON('/api/worker_stats?'+_miner, function(data){
 	displayCharts();
 	rebuildWorkerDisplay();	
     updateStats();
+});
+
+$.getJSON('/api/payouts?'+_miner, function(payouts){
+	var i = payouts.length;
+	for (let p in payouts) {
+		var newRowContent = '<tr><th scope="row">' + i + '</th>';
+		newRowContent+= '<td>' + payouts[p].amount + '</td>';
+		newRowContent+= '<td><a href="' + payouts[p].url + '" target="_blank"><p class="pay-url" >' + payouts[p].url + '</p></a></td>';
+		newRowContent+= '<td>' + payouts[p].date + '</td></tr>';
+		$("#tblPayouts tbody").append(newRowContent);
+		i--;
+	}
 });
 
 // live stat updates

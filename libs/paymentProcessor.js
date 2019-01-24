@@ -1170,7 +1170,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
 					}
 
                     if (Object.keys(addressAmounts).length === 0){
-                        callback(null, workers, rounds, []);
+                        callback(null, workers, rounds, [], []);
                         return;
                     }
 
@@ -1260,9 +1260,18 @@ function SetupForPool(logger, poolOptions, setupFinished){
 								var paymentsData = {time:Date.now(), txid:txid, shares:totalShares, paid:totalSent,  miners:Object.keys(addressAmounts).length, blocks: paymentBlocks, amounts: addressAmounts, balances: balanceAmounts, work:shareAmounts};
 								paymentsUpdate.push(['zadd', logComponent + ':payments', Date.now(), JSON.stringify(paymentsData)]);
 
+								var historyUpdate = [];
+								for (var address in addressAmounts) {
+									var data = {
+										'address': address,
+										'amount': addressAmounts[address],
+										'tx': txid
+									};
+									historyUpdate.push(data)
+								}
 
 
-								callback(null, workers, rounds, paymentsUpdate);
+								callback(null, workers, rounds, paymentsUpdate, historyUpdate);
 							}
 							else {
 								clearInterval(paymentInterval);
@@ -1282,13 +1291,14 @@ function SetupForPool(logger, poolOptions, setupFinished){
 	        /*
 	          Step 5 - Final redis commands
             */
-            function(workers, rounds, paymentsUpdate, callback) {
+            function(workers, rounds, paymentsUpdate, historyUpdate, callback) {
 
                 var totalPaid = 0.0;
 
 				var immatureUpdateCommands = [];
                 var balanceUpdateCommands = [];
-                var workerPayoutsCommand = [];
+                var workerPayoutsCommands = [];
+                var addressHistoryCommands = [];
 
 				// Update worker paid/balance stats.
                 for (var w in workers) {
@@ -1306,7 +1316,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 					// Update payouts.
 					if ((worker.sent || 0) > 0){
-						workerPayoutsCommand.push(['hincrbyfloat', coin + ':payouts', w, coinsRound(worker.sent)]);
+						workerPayoutsCommands.push(['hincrbyfloat', coin + ':payouts', w, coinsRound(worker.sent)]);
 						totalPaid = coinsRound(totalPaid + worker.sent);
 					}
 
@@ -1318,9 +1328,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
 					}
                 }
 
-
-
-                var movePendingCommands = [];
+				var movePendingCommands = [];
                 var roundsToDelete = [];
                 var orphanMergeCommands = [];
 
@@ -1336,6 +1344,15 @@ function SetupForPool(logger, poolOptions, setupFinished){
 						});
 					}
 				};
+
+				for (let i in historyUpdate) {
+					let obj = historyUpdate[i];
+					let json = {
+						"amount": obj.amount,
+						"date": (new Date()).toUTCString()
+					}
+					addressHistoryCommands.push(['hset', coin + ':history:' + obj.address, obj.tx, JSON.stringify(json)]);
+				}
 
 				rounds.forEach(function(r){
 					switch(r.category){
@@ -1375,8 +1392,8 @@ function SetupForPool(logger, poolOptions, setupFinished){
 				if (balanceUpdateCommands.length > 0)
 					finalRedisCommands = finalRedisCommands.concat(balanceUpdateCommands);
 
-				if (workerPayoutsCommand.length > 0)
-					finalRedisCommands = finalRedisCommands.concat(workerPayoutsCommand);
+				if (workerPayoutsCommands.length > 0)
+					finalRedisCommands = finalRedisCommands.concat(workerPayoutsCommands);
 
 				if (roundsToDelete.length > 0)
 					finalRedisCommands.push(['del'].concat(roundsToDelete));
@@ -1389,6 +1406,9 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 				if (paymentsUpdate.length > 0)
 					finalRedisCommands = finalRedisCommands.concat(paymentsUpdate);
+
+				if (addressHistoryCommands.length > 0)
+					finalRedisCommands = finalRedisCommands.concat(addressHistoryCommands);
 
 				if (totalPaid !== 0)
 					finalRedisCommands.push(['hincrbyfloat', coin + ':stats', 'totalPaid', totalPaid]);

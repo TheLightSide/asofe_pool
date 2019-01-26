@@ -68,23 +68,21 @@
         color: #f69b3a;
     }
 
-    #nompAppDownload{
+    .nompAppDownload{
         background-color: #0eafc7;
     }
-    #efbWindowsAppDownload{
-        background-color: #b064e1;
+
+    .efbWindowsAppDownload{
+        background-color: #b064e1 !important;
     }
+
     .miningOption:last-child{
         background-color: #B06501;
     }
-    .miningOptionNum{
-        font-size: 6em;
-        padding-right: 20px;
-        width: 140px;
-        text-align: center;
-    }
+
     .miningOptionInstructions{
         flex: 1 1 auto;
+        padding: 30px;
     }
 
     .miningOptionInstructions > div:first-child{
@@ -232,17 +230,29 @@
 
     <div id="main">
         <div style="display: flex">
-            <a href="/static/download/ewbf_linux.tar.gz" class="miningOption" id="nompAppDownload">
-                <div class="miningOptionNum">1.</div>
+            <a href="/static/download/EWBF_CUDA_Lin64.tar.gz" class="miningOption nompAppDownload">
                 <div class="miningOptionInstructions">
-                    <div>Download EWBF's Zcash Linux</div>
+                    <div>Download EWBF's Linux</div>
                     <div>Our preconfigured app makes mining that easy</div>
                 </div>
             </a>
-            <a href="/static/download/ewbf_windows.zip" class="miningOption" id="efbWindowsAppDownload">
-                <div class="miningOptionNum">1.</div>
+            <a href="/static/download/EWBF_CUDA_Win64.zip" class="miningOption efbWindowsAppDownload">
                 <div class="miningOptionInstructions">
-                    <div>Download EWBF's Zcash Windows</div>
+                    <div>Download EWBF's Windows</div>
+                    <div>Our preconfigured app makes mining that easy</div>
+                </div>
+            </a>
+        </div>
+        <div style="display: flex; margin-top: 25px;">
+            <a href="/static/download/lolMiner_v06_Lin64.tar.gz" class="miningOption nompAppDownload">
+                <div class="miningOptionInstructions">
+                    <div>Download lolminer v0.6 Linux</div>
+                    <div>Our preconfigured app makes mining that easy</div>
+                </div>
+            </a>
+            <a href="/static/download/lolMiner_v06_Win64.zip" class="miningOption efbWindowsAppDownload">
+                <div class="miningOptionInstructions">
+                    <div>Download lolminer v0.6 Windows</div>
                     <div>Our preconfigured app makes mining that easy</div>
                 </div>
             </a>
@@ -252,7 +262,6 @@
             <div id="orText">or</div>
         </div>
         <a href="#" class="miningOption" id="coinGlowTrigger">
-            <div class="miningOptionNum">2.</div>
             <div class="miningOptionInstructions">
                 <div>Select a coin for connection details</div>
                 <div>Configurations for each coin are available for advanced miners</div>

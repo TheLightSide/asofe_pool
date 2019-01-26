@@ -1,7 +1,7 @@
 {
     "name": "a-nomp",
     "version": "0.0.4",
-    "description": "ZenCash (Equihash) stratum mining pool based on NOMP",
+    "description": "Asofe (Equihash_144) stratum mining pool based on NOMP",
     "keywords": [
         "stratum",
         "mining",

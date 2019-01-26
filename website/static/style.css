@@ -12,8 +12,16 @@ html, button, input, select, textarea, .pure-g [class *= "pure-u"], .pure-g-r [c
     border-radius: 0 0 10px 10px;
 }
 
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+}
+
 .navbar a {
     color: white;
+}
+
+.tab-content {
+    width: 100%;
 }
 
 footer{

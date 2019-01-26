@@ -1,8 +1,7 @@
 var zlib = require('zlib');
-
 var redis = require('redis');
 var async = require('async');
-
+var _ = require('lodash');
 var os = require('os');
 
 var algos = require('stratum-pool/lib/algoProperties.js');
@@ -278,29 +277,28 @@ module.exports = function(logger, portalConfig, poolConfigs){
 	this.getAllPayoutsByAddress = function (address, cback) {
 		var a = address.split(".")[0];
 		var client = redisClients[0].client;
+		var fields = ['tx', 'amount', 'date'];
 		var payouts = [];
 
 		async.each(_this.stats.pools, function(pool, pcb) {
-			let coin = String(_this.stats.pools[pool.name].name);
-			client.hgetall(coin + ':history:' + a, function(error, pays) {
-				for (let hash in pays) {
-					let h = {
-						'hash': hash,
-					};
-					let data = Object.assign(h, JSON.parse(pays[hash]));
-					payouts.push(data);
-				}
+			client.sort('history_' + a, 'BY', '*->stamp', 'DESC', 'GET', '*->tx', 'GET', '*->amount', 'GET', '*->date', function(error, values) {
+				payouts = _(values)
+                    .chunk(fields.length)
+                    .map(function(aValueChunk) {
+                        //we will zip the fields and the chunks
+                        return _.zipObject(fields, aValueChunk);
+                    })
+                    .value();
 
-				pcb();
-			});
+                pcb();
+            });
 		}, function(err) {
 			if (err) {
 				cback(0);
 				return;
 			}
 
-			var reversed = payouts.reverse();
-			cback(reversed);
+			cback(payouts);
 		});
 	};
 

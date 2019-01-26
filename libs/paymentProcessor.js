@@ -1346,12 +1346,12 @@ function SetupForPool(logger, poolOptions, setupFinished){
 				};
 
 				for (let i in historyUpdate) {
-					let obj = historyUpdate[i];
-					let json = {
-						"amount": obj.amount,
-						"date": (new Date()).toUTCString()
-					}
-					addressHistoryCommands.push(['hset', coin + ':history:' + obj.address, obj.tx, JSON.stringify(json)]);
+                    let obj = historyUpdate[i];
+                    let timestamp = Math.round(new Date().getTime());
+                    let date = new Date().toUTCString();
+                    let key = coin + ':history:' + obj.address + ":" + timestamp;
+					addressHistoryCommands.push(['hmset', key, 'stamp', timestamp, 'tx', obj.tx, 'amount', obj.amount, 'date', date]);
+                    addressHistoryCommands.push(['sadd', 'history_' + obj.address, key]);
 				}
 
 				rounds.forEach(function(r){

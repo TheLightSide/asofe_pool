@@ -39,6 +39,8 @@
         "dateformat": "^2.2.0",
         "dot": "^1.1.2",
         "express": "^4.16.2",
+        "extend": "*",
+        "lodash": "^4.17.11",
         "mysql": "^2.15.0",
         "node-json-minify": "^1.0.0",
         "node-watch": "^0.5.5",
@@ -46,13 +48,12 @@
         "redis": "^2.8.0",
         "request": "^2.83.0",
         "sleep": "^5.1.1",
-        "stratum-pool": "git+https://github.com/develnk/node-stratum-pool.git",
-        "extend": "*"
+        "stratum-pool": "git+https://github.com/develnk/node-stratum-pool.git"
     },
     "engines": {
         "node": ">=0.10"
     },
     "scripts": {
-      "start": "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/node_modules/stratum-pool/node_modules/equihashverify/build/Release/:$PWD/node_modules/equihashverify/build/Release/ node init.js"
+        "start": "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/node_modules/stratum-pool/node_modules/equihashverify/build/Release/:$PWD/node_modules/equihashverify/build/Release/ node init.js"
     }
 }

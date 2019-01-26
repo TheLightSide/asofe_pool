@@ -113,8 +113,8 @@ module.exports = function(logger, portalConfig, poolConfigs){
 							portalStats.getAllPayoutsByAddress(address, function (payouts) {
 								for (let i in payouts) {
 									let obj = {
-										'url': 'https://explorer.asofe.org/tx/' + payouts[i].hash,
 										'amount': payouts[i].amount,
+										'url': 'https://explorer.asofe.org/tx/' + payouts[i].tx,
 										'date': payouts[i].date
 									};
 

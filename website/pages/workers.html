@@ -40,8 +40,8 @@
 			<i class="fa fa-rocket"></i> <span id="statsWorkers{{=pool}}">{{=it.stats.pools[pool].workerCount}}</span> Workers &nbsp;&nbsp;
 			<i class="fa fa-cog"></i> <span id="statsWorkers{{=pool}}">{{=it.stats.pools[pool].shareCount}}</span> Shares </small>
 		</div>
-        <div class="poolMinerTable">
-            <table class="pure-table">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover table-bordered">
                 <thead>
                 <tr>
                     <th>Address</th>
@@ -52,7 +52,7 @@
                 </thead>
                 {{ for(var worker in it.stats.pools[pool].miners) { }}
                    {{var workerstat = it.stats.pools[pool].miners[worker];}}
-                    <tr class="pure-table-odd">
+                    <tr>
                         <td><a href="/workers/{{=worker.split('.')[0]}}">{{=worker}}</a></td> 
                         <td>{{=Math.round(workerstat.currRoundShares * 100) / 100}}</td>
                         <td>{{? workerstat.shares > 0}} {{=Math.floor(10000 * workerstat.shares / (workerstat.shares + workerstat.invalidshares)) / 100}}% {{??}} 0% {{?}}</td>

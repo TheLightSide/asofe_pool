@@ -420,20 +420,41 @@ var startProfitSwitch = function(){
     });
 };
 
+var daemon = new daemon.interface(portalConfig.daemons);
 
+function preExecute () {
+    var batchRPCcommand = [];
+    batchRPCcommand.push(['getinfo', []]);
+    daemon.batchCmd(batchRPCcommand, function(error, details) {
+        if (error != null) {
+            console.log("Daemon: " + error.type);
+            sleep.sleep(2);
+            preExecute();
+        }
+        else if (details != null) {
+            details.every(function (result) {
+                if (result.error != null) {
+                    console.log("Daemon: " + JSON.stringify(result.error));
+                    sleep.sleep(2);
+                    preExecute();
+                }
+                else {
+                    execute();
+                }
+            });
+        }
+    });
+};
+
+function execute () {
+    spawnPoolWorkers();
+    startPaymentProcessor();
+    startWebsite();
+    startProfitSwitch();
+    startCliListener();
+};
 
 (function init(){
-
     poolConfigs = buildPoolConfigs();
-
-    spawnPoolWorkers();
-
-    startPaymentProcessor();
-
-    startWebsite();
-
-    startProfitSwitch();
-
-    startCliListener();
-
+    preExecute(execute);
 })();

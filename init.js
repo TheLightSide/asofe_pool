@@ -2,10 +2,11 @@ var fs = require('fs');
 var path = require('path');
 var os = require('os');
 var cluster = require('cluster');
-
+var sleep = require('sleep');
+var daemon = require('stratum-pool/lib/daemon.js');
 var async = require('async');
 var extend = require('extend');
-
+var redis = require('redis');
 var PoolLogger = require('./libs/logUtil.js');
 var CliListener = require('./libs/cliListener.js');
 var PoolWorker = require('./libs/poolWorker.js');

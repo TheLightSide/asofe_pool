@@ -220,10 +220,10 @@ $.getJSON('/api/worker_stats?'+_miner, function(data){
 
 $.getJSON('/api/payouts?'+_miner, function(payouts){
 	var i = payouts.length;
-	var total_amount = 0;
+	var total_amount = 0.0;
 
 	for (let p in payouts) {
-		total_amount += payouts[p].amount;
+		total_amount += parseFloat(payouts[p].amount);
 		var newRowContent = '<tr><th scope="row">' + i + '</th>';
 		newRowContent+= '<td>' + payouts[p].amount + '</td>';
 		newRowContent+= '<td><a href="' + payouts[p].url + '" target="_blank"><p class="pay-url" >' + payouts[p].url + '</p></a></td>';

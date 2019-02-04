@@ -56,6 +56,10 @@
 		min-height: 330px;
         width: 100%;
 	}
+    .totals {
+        padding-left: 10px;
+        padding-top: 10px;
+    }
 
 	.pay-url {
 		width: 43em;
@@ -101,7 +105,10 @@
 			<div id="boxesWorkers"> </div>
 		</div>
 		<div class="tab-pane fade" id="payouts" role="tabpanel" aria-labelledby="payouts-tab">
-			<div class="totals"><span>Total amounts: <b id="totalAmount"></b></span><span>Count transactions: <b id="totalTransactions"></b></span></div>
+			<div class="totals">
+                <p>Total amounts: <b id="totalAmount"></b></p>
+                <p>Count transactions: <b id="totalTransactions"></b></p>
+            </div>
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover" id="tblPayouts">
 					<thead>

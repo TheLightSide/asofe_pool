@@ -223,7 +223,7 @@ $.getJSON('/api/payouts?'+_miner, function(payouts){
 	var total_amount = 0.0;
 
 	for (let p in payouts) {
-		total_amount += parseFloat(payouts[p].amount);
+		total_amount += parseFloat(payouts[p].amount).toFixed(2);
 		var newRowContent = '<tr><th scope="row">' + i + '</th>';
 		newRowContent+= '<td>' + payouts[p].amount + '</td>';
 		newRowContent+= '<td><a href="' + payouts[p].url + '" target="_blank"><p class="pay-url" >' + payouts[p].url + '</p></a></td>';

@@ -281,10 +281,6 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 		var amountSatoshi = coinsToSatoshies(tBalance);
 		var amount = satoshisToCoins(amountSatoshi - 1);
-		// Restrict max amount to 200000 ASF
-		if (amount >= 200000) {
-			amount = 199999.99;
-		}
 
 		var params = [poolOptions.address, [{'address': poolOptions.zAddress, 'amount': amount}]];
 		daemon.cmd('z_sendmany', params,
@@ -326,9 +322,9 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 		var amountSatoshi = coinsToSatoshies(zBalance);
 		var amount = satoshisToCoins(amountSatoshi - 1);
-		// Unshield no more than 20000 ASF at a time
-		if (amount > 20000) {
-			amount = 20000;
+		// Unshield no more than 80000 ASF at a time
+		if (amount > 80000) {
+			amount = 80000;
 		}
 
 		var params = [poolOptions.zAddress, [{'address': poolOptions.tAddress, 'amount': amount}]];
@@ -443,7 +439,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 	// Run shielding process every x minutes.
 	var shieldIntervalState = 0; // do not send ZtoT and TtoZ and same time, this results in operation failed!
-	var shielding_interval = Math.max(parseInt(poolOptions.walletInterval || 1), 1) * 60 * 2000; // run every x minutes
+	var shielding_interval = Math.max(parseInt(poolOptions.walletInterval || 1), 1) * 60 * 1000; // run every x minutes
 	// Shielding not required for some equihash coins.
 	if (requireShielding === true) {
 		var shieldInterval = setInterval(function() {

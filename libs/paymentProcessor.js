@@ -51,6 +51,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
     var logComponent = coin;
 
 	var opidCount = 0;
+	var opidResist = 0;
 	var opids = [];
 
 	// ZCash team recommends 10 confirmations for safety from orphaned blocks.
@@ -274,7 +275,14 @@ function SetupForPool(logger, poolOptions, setupFinished){
 		}
 
 		// do not allow more than a single z_sendmany operation at a time
-		if (opidCount > 0) {
+		if (opidResist >= 5) {
+			logger.warning(logSystem, logComponent, 'sendTToZ Clear opidCount and opids!!!.');
+			opidCount = 0;
+			opids = [];
+			opidResist = 0;
+		}
+		else if (opidCount > 0) {
+			opidResist++;
 			logger.warning(logSystem, logComponent, 'sendTToZ is waiting, too many z_sendmany operations already in progress.');
 			return;
 		}
@@ -315,7 +323,14 @@ function SetupForPool(logger, poolOptions, setupFinished){
 			return;
 
 		// do not allow more than a single z_sendmany operation at a time
-		if (opidCount > 0) {
+		if (opidResist >= 5) {
+			logger.warning(logSystem, logComponent, 'sendZToT Clear opidCount and opids!!!.');
+			opidCount = 0;
+			opids = [];
+			opidResist = 0;
+		}
+		else if (opidCount > 0) {
+			opidResist++;
 			logger.warning(logSystem, logComponent, 'sendZToT is waiting, too many z_sendmany operations already in progress.');
 			return;
 		}

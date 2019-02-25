@@ -1117,18 +1117,18 @@ function SetupForPool(logger, poolOptions, setupFinished){
 					var totalSent = 0;
 					var totalShares = 0;
 
-					// track attempts made, calls to trySend...
+					// Track attempts made, calls to trySend...
 					tries++;
 
 					// Total up miner's balances.
 					for (var w in workers) {
-						var worker = workers[w];
+						let worker = workers[w];
 						totalShares += (worker.totalShares || 0)
 						worker.balance = worker.balance || 0;
 						worker.reward = worker.reward || 0;
-						// get miner payout totals
-						var toSend = coinsRound((worker.balance + worker.reward) * (1 - withholdPercent));
-						var address = worker.address = (worker.address || getProperAddress(w.split('.')[0])).trim();
+						// Get miner payout totals.
+						let toSend = coinsRound((worker.balance + worker.reward) * (1 - withholdPercent));
+						let address = worker.address = (worker.address || getProperAddress(w.split('.')[0])).trim();
 						if (minerTotals[address] != null && minerTotals[address] > 0) {
 							minerTotals[address] += toSend;
 						} else {
@@ -1138,11 +1138,11 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 					// Now process each workers balance, and pay the miner.
 					for (var w in workers) {
-						var worker = workers[w];
+						let worker = workers[w];
 						worker.balance = worker.balance || 0;
 						worker.reward = worker.reward || 0;
-						var toSend = coinsRound((worker.balance + worker.reward) * (1 - withholdPercent));
-						var address = worker.address = (worker.address || getProperAddress(w.split('.')[0])).trim();
+						let toSend = coinsRound((worker.balance + worker.reward) * (1 - withholdPercent));
+						let address = worker.address = (worker.address || getProperAddress(w.split('.')[0])).trim();
 
 						// If miners total is enough, go ahead and add this worker balance.
 						if (minerTotals[address] >= minPayment) {
@@ -1152,10 +1152,11 @@ function SetupForPool(logger, poolOptions, setupFinished){
 							if (worker.sent > 0) {
 								worker.balanceChange = coinsRound(Math.min(worker.balance, toSend) * -1);
 								if (addressAmounts[address] != null) {
-									worker.sent = coinsRound(addressAmounts[address] + worker.sent);
+									addressAmounts[address] = coinsRound(addressAmounts[address] + worker.sent);
 								}
-
-								addressAmounts[address] = coinsRound(worker.sent);
+								else {
+									addressAmounts[address] = worker.sent;
+								}
 							}
 						} else {
 							// Add to balance, not enough minerals.
@@ -1220,7 +1221,6 @@ function SetupForPool(logger, poolOptions, setupFinished){
 								// Payment failed, prevent updates to redis.
 								callback(true);
 							}
-							return;
 						}
 						else if (result.error && result.error.code === -5) {
 							// Invalid address specified in addressAmounts array.
@@ -1228,7 +1228,6 @@ function SetupForPool(logger, poolOptions, setupFinished){
 							logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
 							// Payment failed, prevent updates to redis.
 							callback(true);
-							return;
 						}
 						else if (result.error && result.error.message != null) {
 							// Invalid amount, others?
@@ -1236,14 +1235,12 @@ function SetupForPool(logger, poolOptions, setupFinished){
 							logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
 							// Payment failed, prevent updates to redis.
 							callback(true);
-							return;
 						}
 						else if (result.error) {
 							// Unknown error.
 							logger.error(logSystem, logComponent, 'Error sending payments ' + JSON.stringify(result.error));
 							// Payment failed, prevent updates to redis.
 							callback(true);
-							return;
 						}
 						else {
 							// Make sure sendmany gives us back a txid.
@@ -1281,7 +1278,6 @@ function SetupForPool(logger, poolOptions, setupFinished){
 									historyUpdate.push(data)
 								}
 
-
 								callback(null, workers, rounds, paymentsUpdate, historyUpdate);
 							}
 							else {
@@ -1290,7 +1286,6 @@ function SetupForPool(logger, poolOptions, setupFinished){
 									+ JSON.stringify(result) + 'Disabling payment processing to prevent possible double-payouts.');
 
 								callback(true);
-								return;
 							}
 						}
 					}, true, true);
@@ -1313,7 +1308,7 @@ function SetupForPool(logger, poolOptions, setupFinished){
 
 				// Update worker paid/balance stats.
                 for (var w in workers) {
-                    var worker = workers[w];
+                    let worker = workers[w];
 
 					// Update balances.
 					if ((worker.balanceChange || 0) !== 0){
